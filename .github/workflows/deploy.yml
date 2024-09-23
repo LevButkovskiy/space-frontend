@@ -54,6 +54,6 @@ jobs:
           password: ${{ secrets.SERVER_PASSWORD }}
           script: |
             cd ~/space-frontend
-            docker-compose down
-            docker-compose up -d --build
+            docker compose down
+            docker compose up -d --build
           debug: true
