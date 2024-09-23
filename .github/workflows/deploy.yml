@@ -1,0 +1,57 @@
+name: Deploy
+on: 
+  push:
+    branches:
+      - main
+
+jobs:
+  build: 
+    runs-on: ubuntu-22.04
+    steps: 
+      - name: Get Source Code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: build
+
+  deploy:
+    runs-on: ubuntu-22.04
+    needs: build
+    steps: 
+      - name: Get Source Code
+        uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build
+          path: ./build
+
+      - name: Copy build to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          source: "build,docker-compose.yml,Dockerfile"
+          target: "space-frontend"
+
+      - name: SSH and deploy with Docker Compose
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          script: |
+            cd ~/space-frontend
+            docker-compose down
+            docker-compose up -d --build
