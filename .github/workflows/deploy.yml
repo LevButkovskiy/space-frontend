@@ -44,6 +44,7 @@ jobs:
           password: ${{ secrets.SERVER_PASSWORD }}
           source: "dist,docker-compose.yml,Dockerfile"
           target: "space-frontend"
+          debug: true
 
       - name: SSH and deploy with Docker Compose
         uses: appleboy/ssh-action@v1.0.3
@@ -55,3 +56,4 @@ jobs:
             cd ~/space-frontend
             docker-compose down
             docker-compose up -d --build
+          debug: true
