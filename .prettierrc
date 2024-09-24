@@ -1,0 +1,27 @@
+{
+	"parser": "typescript",
+	"semi": false,
+	"tabWidth": 4,
+	"useTabs": true,
+	"quoteProps": "as-needed",
+	"jsxSingleQuote": true,
+	"trailingComma": "all",
+	"bracketSpacing": false,
+	"htmlWhitespaceSensitivity": "ignore",
+	"printWidth": 120,
+	"overrides": [
+		{
+			"files": ["*.json", ".prettierrc"],
+			"options": {
+				"plugins": [],
+				"parser": "json"
+			}
+		},
+		{
+			"files": ["*.ts", ".tsx"],
+			"options": {
+				"parser": "typescript"
+			}
+		}
+	]
+}
