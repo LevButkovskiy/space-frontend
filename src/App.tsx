@@ -16,30 +16,13 @@ function App() {
 				setPermissionState("granted")
 			},
 			(error) => {
+				setPermissionState(error.message)
+				return
 				if (error.code === error.PERMISSION_DENIED) setPermissionState("denied")
 				if (error.code === error.POSITION_UNAVAILABLE) setPermissionState("unavailable")
 				if (error.code === error.TIMEOUT) setPermissionState("timeout")
 			},
 		)
-
-		// navigator.geolocation.watchPosition(
-		// 	(position) => {
-		// 		console.log(position)
-		// 		setPosition(position)
-		// 	},
-		// 	null,
-		// 	{enableHighAccuracy: true},
-		// )
-
-		// const handleDeviceOrientation = (event: DeviceOrientationEvent) => {
-		// 	if (event.alpha) setAngle(event.alpha)
-		// }
-
-		// window.addEventListener("deviceorientation", handleDeviceOrientation, true)
-
-		// return () => {
-		// 	window.removeEventListener("deviceorientation", handleDeviceOrientation, true)
-		// }
 	}, [])
 
 	return (
