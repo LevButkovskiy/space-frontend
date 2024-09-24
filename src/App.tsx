@@ -7,8 +7,13 @@ function App() {
 	const [count, setCount] = useState(0)
 	const [angle, setAngle] = useState(0)
 	const [position, setPosition] = useState<GeolocationPosition>()
+	const [permissionState, setPermissionState] = useState<PermissionState>()
 
 	useEffect(() => {
+		navigator.permissions.query({name: "geolocation"}).then((permission) => {
+			console.log(permission.state)
+			setPermissionState(permission.state)
+		})
 		navigator.geolocation.watchPosition((position) => {
 			console.log(position)
 			setPosition(position)
@@ -37,8 +42,11 @@ function App() {
 			</div>
 			<h1>Vite + React</h1>
 			<div className='card'>
-				<p>Angel {angle}</p>
-				<code>{JSON.stringify(position, null, 4)}</code>
+				<div style={{display: "flex", flexDirection: "column", gap: 2}}>
+					<p>Angel {angle}</p>
+					<code>Position: {JSON.stringify(position, null, 4)}</code>
+					<code>Permission: {JSON.stringify(permissionState, null, 2)}</code>
+				</div>
 				<button onClick={() => setCount((count) => count + 1)}>count is {count}</button>
 				<p>
 					Edit <code>src/App.tsx</code> and save to test HMR
