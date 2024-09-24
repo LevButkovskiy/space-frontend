@@ -13,10 +13,17 @@ function App() {
 		navigator.permissions.query({name: "geolocation"}).then((permission) => {
 			console.log(permission.state)
 			setPermissionState(permission.state)
-		})
-		navigator.geolocation.watchPosition((position) => {
-			console.log(position)
-			setPosition(position)
+
+			navigator.geolocation.getCurrentPosition(setPosition)
+
+			navigator.geolocation.watchPosition(
+				(position) => {
+					console.log(position)
+					setPosition(position)
+				},
+				null,
+				{enableHighAccuracy: true},
+			)
 		})
 
 		const handleDeviceOrientation = (event: DeviceOrientationEvent) => {
