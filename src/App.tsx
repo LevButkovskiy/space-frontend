@@ -14,6 +14,10 @@ function App() {
 			console.log(permission.state)
 			setPermissionState(permission.state)
 
+			permission.addEventListener("change", () => {
+				setPermissionState(permission.state)
+			})
+
 			navigator.geolocation.getCurrentPosition(setPosition)
 
 			navigator.geolocation.watchPosition(
