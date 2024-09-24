@@ -1,4 +1,4 @@
-import {useState} from "react"
+import {useEffect, useState} from "react"
 import "./App.css"
 import reactLogo from "./assets/react.svg"
 import viteLogo from "/vite.svg"
@@ -8,21 +8,20 @@ function App() {
 	const [position, setPosition] = useState<GeolocationPosition>()
 	const [permissionState, setPermissionState] = useState<string>()
 
-	const getGeolocation = () => {
-		navigator.geolocation.getCurrentPosition(
+	useEffect(() => {
+		const watchId = navigator.geolocation.watchPosition(
 			(position) => {
 				setPosition(position)
 				setPermissionState("granted")
 			},
-			(error) => {
-				setPermissionState(error.message)
-				return
-				if (error.code === error.PERMISSION_DENIED) setPermissionState("denied")
-				if (error.code === error.POSITION_UNAVAILABLE) setPermissionState("unavailable")
-				if (error.code === error.TIMEOUT) setPermissionState("timeout")
-			},
+			(error) => setPermissionState(error.message),
+			{enableHighAccuracy: true},
 		)
-	}
+
+		return () => {
+			navigator.geolocation.clearWatch(watchId)
+		}
+	}, [])
 
 	// useEffect(() => {
 	// 	getGeolocation()
@@ -48,7 +47,7 @@ function App() {
 					</code>
 					<code>Permission: {JSON.stringify(permissionState, null, 2)}</code>
 				</div>
-				<button onClick={getGeolocation}>get geo</button>
+				{/* <button onClick={getGeolocation}>get geo</button> */}
 				<p>
 					Edit <code>src/App.tsx</code> and save to test HMR
 				</p>
