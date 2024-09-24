@@ -42,7 +42,10 @@ function App() {
 			<div className='card'>
 				<div style={{display: "flex", flexDirection: "column", gap: 2}}>
 					<p>Angel {angle}</p>
-					<code>Position: {JSON.stringify(position, null, 4)}</code>
+					<code>
+						Position: {JSON.stringify(position, null, 4)} {position?.coords.latitude}{" "}
+						{position?.coords.longitude}
+					</code>
 					<code>Permission: {JSON.stringify(permissionState, null, 2)}</code>
 				</div>
 				<button onClick={getGeolocation}>get geo</button>
