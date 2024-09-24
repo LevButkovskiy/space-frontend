@@ -1,15 +1,14 @@
-import {useEffect, useState} from "react"
+import {useState} from "react"
 import "./App.css"
 import reactLogo from "./assets/react.svg"
 import viteLogo from "/vite.svg"
 
 function App() {
-	const [count, setCount] = useState(0)
 	const [angle] = useState(0)
 	const [position, setPosition] = useState<GeolocationPosition>()
 	const [permissionState, setPermissionState] = useState<string>()
 
-	useEffect(() => {
+	const getGeolocation = () => {
 		navigator.geolocation.getCurrentPosition(
 			(position) => {
 				setPosition(position)
@@ -23,7 +22,11 @@ function App() {
 				if (error.code === error.TIMEOUT) setPermissionState("timeout")
 			},
 		)
-	}, [])
+	}
+
+	// useEffect(() => {
+	// 	getGeolocation()
+	// }, [])
 
 	return (
 		<>
@@ -42,7 +45,7 @@ function App() {
 					<code>Position: {JSON.stringify(position, null, 4)}</code>
 					<code>Permission: {JSON.stringify(permissionState, null, 2)}</code>
 				</div>
-				<button onClick={() => setCount((count) => count + 1)}>count is {count}</button>
+				<button onClick={getGeolocation}>get geo</button>
 				<p>
 					Edit <code>src/App.tsx</code> and save to test HMR
 				</p>
