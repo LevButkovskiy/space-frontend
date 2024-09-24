@@ -5,40 +5,41 @@ import viteLogo from "/vite.svg"
 
 function App() {
 	const [count, setCount] = useState(0)
-	const [angle, setAngle] = useState(0)
+	const [angle] = useState(0)
 	const [position, setPosition] = useState<GeolocationPosition>()
-	const [permissionState, setPermissionState] = useState<PermissionState>()
+	const [permissionState, setPermissionState] = useState<string>()
 
 	useEffect(() => {
-		navigator.permissions.query({name: "geolocation"}).then((permission) => {
-			console.log(permission.state)
-			setPermissionState(permission.state)
+		navigator.geolocation.getCurrentPosition(
+			(position) => {
+				setPosition(position)
+				setPermissionState("granted")
+			},
+			(error) => {
+				if (error.code === error.PERMISSION_DENIED) setPermissionState("denied")
+				if (error.code === error.POSITION_UNAVAILABLE) setPermissionState("unavailable")
+				if (error.code === error.TIMEOUT) setPermissionState("timeout")
+			},
+		)
 
-			permission.addEventListener("change", () => {
-				setPermissionState(permission.state)
-			})
+		// navigator.geolocation.watchPosition(
+		// 	(position) => {
+		// 		console.log(position)
+		// 		setPosition(position)
+		// 	},
+		// 	null,
+		// 	{enableHighAccuracy: true},
+		// )
 
-			navigator.geolocation.getCurrentPosition(setPosition)
+		// const handleDeviceOrientation = (event: DeviceOrientationEvent) => {
+		// 	if (event.alpha) setAngle(event.alpha)
+		// }
 
-			navigator.geolocation.watchPosition(
-				(position) => {
-					console.log(position)
-					setPosition(position)
-				},
-				null,
-				{enableHighAccuracy: true},
-			)
-		})
+		// window.addEventListener("deviceorientation", handleDeviceOrientation, true)
 
-		const handleDeviceOrientation = (event: DeviceOrientationEvent) => {
-			if (event.alpha) setAngle(event.alpha)
-		}
-
-		window.addEventListener("deviceorientation", handleDeviceOrientation, true)
-
-		return () => {
-			window.removeEventListener("deviceorientation", handleDeviceOrientation, true)
-		}
+		// return () => {
+		// 	window.removeEventListener("deviceorientation", handleDeviceOrientation, true)
+		// }
 	}, [])
 
 	return (
