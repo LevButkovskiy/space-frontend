@@ -14,8 +14,11 @@ export const Compass = () => {
 			let {alpha} = event
 			if (!alpha) return
 
-			if (window.screen.orientation && window.screen.orientation.angle === 180) {
-				alpha = (alpha + 180) % 360 // компенсируем 180 градусов
+			const orientation = window.screen.orientation
+
+			if (orientation && orientation.angle) {
+				// Если устройство находится в альбомной ориентации, корректируем угол
+				alpha = (alpha + orientation.angle) % 360
 			}
 
 			if (alpha >= 337.5 || alpha < 22.5) setDirection("North")
