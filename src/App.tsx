@@ -4,7 +4,7 @@ import reactLogo from "./assets/react.svg"
 import viteLogo from "/vite.svg"
 
 function App() {
-	const [angle] = useState(0)
+	const [deviceOrientation, setDeviceOrientation] = useState<DeviceOrientationEvent>()
 	const [position, setPosition] = useState<GeolocationPosition>()
 	const [permissionState, setPermissionState] = useState<string>()
 
@@ -18,8 +18,15 @@ function App() {
 			{enableHighAccuracy: true},
 		)
 
+		const handleOrientation = (event: DeviceOrientationEvent) => {
+			setDeviceOrientation(event)
+		}
+
+		window.addEventListener("deviceorientation", handleOrientation, true)
+
 		return () => {
 			navigator.geolocation.clearWatch(watchId)
+			window.removeEventListener("deviceorientation", handleOrientation, true)
 		}
 	}, [])
 
@@ -40,7 +47,10 @@ function App() {
 			<h1>Vite + React</h1>
 			<div className='card'>
 				<div style={{display: "flex", flexDirection: "column", gap: 2}}>
-					<p>Angel {angle}</p>
+					<code>
+						Orientatiion: {JSON.stringify(deviceOrientation, null, 4)} {deviceOrientation?.alpha}
+						{deviceOrientation?.beta} {deviceOrientation?.gamma}
+					</code>
 					<code>
 						Position: {JSON.stringify(position, null, 4)} {position?.coords.latitude}{" "}
 						{position?.coords.longitude}
