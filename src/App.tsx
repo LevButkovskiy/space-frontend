@@ -74,12 +74,11 @@ function App() {
 			<div className='card'>
 				<div style={{display: "flex", flexDirection: "column", gap: 2}}>
 					<code>
-						Orientation: {JSON.stringify(deviceOrientation, null, 4)} {deviceOrientation?.alpha}
-						{deviceOrientation?.beta} {deviceOrientation?.gamma}
+						Orienatition: {deviceOrientation?.alpha?.toFixed(2)} {deviceOrientation?.beta?.toFixed(2)}{" "}
+						{deviceOrientation?.gamma?.toFixed(2)}
 					</code>
 					<code>
-						Position: {JSON.stringify(position, null, 4)} {position?.coords.latitude}{" "}
-						{position?.coords.longitude}
+						Position: {position?.coords.latitude} {position?.coords.longitude}
 					</code>
 					<code>Permission: {JSON.stringify(permissionState, null, 2)}</code>
 				</div>
