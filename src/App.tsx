@@ -1,4 +1,5 @@
 import {useEffect, useState} from "react"
+import pJson from "../package.json"
 import "./App.css"
 import reactLogo from "./assets/react.svg"
 import viteLogo from "/vite.svg"
@@ -36,6 +37,7 @@ function App() {
 						console.error("Permission denied for device orientation.")
 					}
 				} catch (error) {
+					alert(error)
 					console.error("Error requesting permission for device orientation:", error)
 				}
 			} else {
@@ -87,6 +89,7 @@ function App() {
 				</p>
 			</div>
 			<p className='read-the-docs'>Click on the Vite and React logos to learn more</p>
+			<p>{pJson.version}</p>
 		</>
 	)
 }
