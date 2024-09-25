@@ -9,6 +9,9 @@ function App() {
 	const [permissionState, setPermissionState] = useState<string>()
 
 	useEffect(() => {
+		const handleOrientation = (event: DeviceOrientationEvent) => {
+			setDeviceOrientation(event)
+		}
 		const watchId = navigator.geolocation.watchPosition(
 			(position) => {
 				setPosition(position)
@@ -17,12 +20,32 @@ function App() {
 			(error) => setPermissionState(error.message),
 			{enableHighAccuracy: true},
 		)
+		const requestDeviceOrientationPermission = async () => {
+			// Приведение типов к any, чтобы использовать метод requestPermission
+			if ((DeviceOrientationEvent as any).requestPermission) {
+				try {
+					const permissionState = await (DeviceOrientationEvent as any).requestPermission()
+					alert(permissionState)
+					if (permissionState === "granted") {
+						alert("granted")
+						// Если разрешение предоставлено, добавляем слушатель события
+						window.addEventListener("deviceorientation", handleOrientation, true)
+					} else {
+						alert("denied")
 
-		const handleOrientation = (event: DeviceOrientationEvent) => {
-			setDeviceOrientation(event)
+						console.error("Permission denied for device orientation.")
+					}
+				} catch (error) {
+					console.error("Error requesting permission for device orientation:", error)
+				}
+			} else {
+				// Для старых устройств или тех, где разрешение не требуется
+				window.addEventListener("deviceorientation", handleOrientation, true)
+			}
 		}
 
-		window.addEventListener("deviceorientation", handleOrientation, true)
+		// Вызов функции запроса разрешения
+		requestDeviceOrientationPermission()
 
 		return () => {
 			navigator.geolocation.clearWatch(watchId)
@@ -48,7 +71,7 @@ function App() {
 			<div className='card'>
 				<div style={{display: "flex", flexDirection: "column", gap: 2}}>
 					<code>
-						Orientatiion: {JSON.stringify(deviceOrientation, null, 4)} {deviceOrientation?.alpha}
+						Orientation: {JSON.stringify(deviceOrientation, null, 4)} {deviceOrientation?.alpha}
 						{deviceOrientation?.beta} {deviceOrientation?.gamma}
 					</code>
 					<code>
