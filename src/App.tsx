@@ -40,6 +40,7 @@ function App() {
 				}
 			} else {
 				// Для старых устройств или тех, где разрешение не требуется
+				alert("old device")
 				window.addEventListener("deviceorientation", handleOrientation, true)
 			}
 		}
