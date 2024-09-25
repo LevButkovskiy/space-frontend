@@ -8,11 +8,9 @@ function App() {
 	const [deviceOrientation, setDeviceOrientation] = useState<DeviceOrientationEvent>()
 	const [position, setPosition] = useState<GeolocationPosition>()
 	const [permissionState, setPermissionState] = useState<string>()
+	const [isOrientationPermitted, setIsOrientationPermitted] = useState(false)
 
 	useEffect(() => {
-		const handleOrientation = (event: DeviceOrientationEvent) => {
-			setDeviceOrientation(event)
-		}
 		const watchId = navigator.geolocation.watchPosition(
 			(position) => {
 				setPosition(position)
@@ -21,44 +19,46 @@ function App() {
 			(error) => setPermissionState(error.message),
 			{enableHighAccuracy: true},
 		)
-		const requestDeviceOrientationPermission = async () => {
-			// Приведение типов к any, чтобы использовать метод requestPermission
-			if ((DeviceOrientationEvent as any).requestPermission) {
-				try {
-					const permissionState = await (DeviceOrientationEvent as any).requestPermission()
-					alert(permissionState)
-					if (permissionState === "granted") {
-						alert("granted")
-						// Если разрешение предоставлено, добавляем слушатель события
-						window.addEventListener("deviceorientation", handleOrientation, true)
-					} else {
-						alert("denied")
-
-						console.error("Permission denied for device orientation.")
-					}
-				} catch (error) {
-					alert(error)
-					console.error("Error requesting permission for device orientation:", error)
-				}
-			} else {
-				// Для старых устройств или тех, где разрешение не требуется
-				alert("old device")
-				window.addEventListener("deviceorientation", handleOrientation, true)
-			}
-		}
-
-		// Вызов функции запроса разрешения
-		requestDeviceOrientationPermission()
 
 		return () => {
 			navigator.geolocation.clearWatch(watchId)
-			window.removeEventListener("deviceorientation", handleOrientation, true)
 		}
 	}, [])
 
-	// useEffect(() => {
-	// 	getGeolocation()
-	// }, [])
+	useEffect(() => {
+		if (!isOrientationPermitted) return
+
+		const handleOrientation = (event: DeviceOrientationEvent) => {
+			setDeviceOrientation(event)
+		}
+
+		window.addEventListener("deviceorientation", handleOrientation, true)
+
+		return () => {
+			window.removeEventListener("deviceorientation", handleOrientation, true)
+		}
+	}, [isOrientationPermitted])
+
+	const handleOrientationAccessClick = async () => {
+		if ((DeviceOrientationEvent as any).requestPermission) {
+			try {
+				const permissionState = await (DeviceOrientationEvent as any).requestPermission()
+				alert(permissionState)
+				if (permissionState === "granted") {
+					alert("granted")
+					setIsOrientationPermitted(true)
+				} else {
+					alert("denied")
+					console.error("Permission denied for device orientation.")
+				}
+			} catch (error) {
+				alert(error)
+				console.error("Error requesting permission for device orientation:", error)
+			}
+		} else {
+			alert("old device")
+		}
+	}
 
 	return (
 		<>
@@ -83,7 +83,7 @@ function App() {
 					</code>
 					<code>Permission: {JSON.stringify(permissionState, null, 2)}</code>
 				</div>
-				{/* <button onClick={getGeolocation}>get geo</button> */}
+				<button onClick={handleOrientationAccessClick}>Allow orientation</button>
 				<p>
 					Edit <code>src/App.tsx</code> and save to test HMR
 				</p>
